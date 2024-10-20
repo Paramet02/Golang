@@ -1,0 +1,9 @@
+app:
+  port: 8080
+
+database:
+  host: localhost # หรือชื่อ Docker service ถ้าอยู่ใน container อื่น
+  port: 5432 # พอร์ตเริ่มต้นของ PostgreSQL
+  user: myuser # ตั้งไว้ใน docker-compose.yml
+  password: mypassword # ตั้งไว้ใน docker-compose.yml
+  dbname: mydatabase # ตั้งไว้ใน docker-compose.yml
