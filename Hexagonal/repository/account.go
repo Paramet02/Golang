@@ -9,7 +9,7 @@ type Account struct {
 	Status      int     `gorm:"column:status"`
 }
 
-
+// port
 type AccountRpeository interface {
 	Create(Account) (*Account , error)
 	GetAll(int) ([]Account , error)
