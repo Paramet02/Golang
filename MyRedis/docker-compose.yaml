@@ -1,0 +1,80 @@
+version: '3.8'
+services:
+  redis:
+    image: redis
+    container_name: redis-v2
+    environment:
+      -  REDIS_PASSWORD=65064384
+    ports:
+      - 6379:6379
+    volumes:
+      - ./data/redis:/data # คือการเอาข้อมูลมาเก็บใน docker มาเก็บใน folder data/redis
+      - ./config/redis.conf:/redis.conf # config ของเราที่ set ไว้ไปยัง docker  
+    command: redis-server /redis.conf # ตอนเรา run ขึ้นมามันไม่ได้ run config ด้วย เราต้องทำการ run config ด้วย
+
+  k6: # ตัวยิง loadtset 
+    image: loadimpact/k6
+    container_name: k6-v2
+    environment:
+      - K6_OUT=influxdb=http://influxdb:8086/k6-paramet # ยิงไป loadtest ไปยัง influxdb
+    volumes: 
+      - ./scripts:/scripts # เอาไฟล์ scripts จาก folder scripts ไปยัง docker 
+      
+  influxdb: # เก็บ loadtest ใน influxdb
+    image: influxdb:1.8.10
+    container_name: influxdb-v2
+    environment:
+      - INFLUXDB_DB=k6-paramet
+      - INFLUXDB_HTTP_MAX_BODY_SIZE=0
+    volumes:
+      - ./data/influxdb:/var/lib/influxdb 
+      # volumes จะช่วยให้ข้อมูลที่ถูกบันทึกหรือจัดเก็บใน container สามารถเก็บรักษาไว้ใน host ได้แม้
+      # container จะหยุดทำงาน และ container เองก็สามารถเข้าถึงและใช้งานข้อมูลที่มีอยู่ใน host ได้
+      # port ของ influxdb คือ 8086 
+    
+  grafana:
+    image: grafana/grafana
+    container_name: grafana-v2
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=false
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=65064384
+    ports:
+      - 3000:3000
+    volumes:
+      - ./data/grafana:/var/lib/grafana
+
+  mariadb:
+    image: mariadb
+    container_name: mariadb
+    environment:
+      - MARIADB_ROOT_PASSWORD=Newadmin
+      - MARIADB_DATABASE=infinitas
+    ports:
+      - 3306:3306
+    volumes:
+      - ./data/mariadb:/var/lib/mysql
+  
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_USER=myuser
+      - POSTGRES_DB=mydatabase
+    ports:
+      - 5432:5432
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data # สำหรับเก็บข้อมูล PostgreSQL
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=65064384
+    ports:
+      - 5050:80 # เปิด port 5050 สำหรับ pgAdmin
+    volumes:
+      - ./data/pgadmin:/var/lib/pgadmin # เก็บข้อมูล pgAdmin
