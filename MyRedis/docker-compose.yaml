@@ -16,7 +16,7 @@ services:
     image: loadimpact/k6
     container_name: k6-v2
     environment:
-      - K6_OUT=influxdb=http://influxdb:8086/k6-paramet # ยิงไป loadtest ไปยัง influxdb
+      - K6_OUT=influxdb=http://influxdb:8086/k6_paramet # ยิงไป loadtest ไปยัง influxdb
     volumes: 
       - ./scripts:/scripts # เอาไฟล์ scripts จาก folder scripts ไปยัง docker 
       
@@ -24,8 +24,10 @@ services:
     image: influxdb:1.8.10
     container_name: influxdb-v2
     environment:
-      - INFLUXDB_DB=k6-paramet
+      - INFLUXDB_DB=k6_paramet
       - INFLUXDB_HTTP_MAX_BODY_SIZE=0
+    ports:
+      - 8086:8086
     volumes:
       - ./data/influxdb:/var/lib/influxdb 
       # volumes จะช่วยให้ข้อมูลที่ถูกบันทึกหรือจัดเก็บใน container สามารถเก็บรักษาไว้ใน host ได้แม้
@@ -44,18 +46,7 @@ services:
       - 3000:3000
     volumes:
       - ./data/grafana:/var/lib/grafana
-
-  mariadb:
-    image: mariadb
-    container_name: mariadb
-    environment:
-      - MARIADB_ROOT_PASSWORD=Newadmin
-      - MARIADB_DATABASE=infinitas
-    ports:
-      - 3306:3306
-    volumes:
-      - ./data/mariadb:/var/lib/mysql
-  
+      
   postgres:
     image: postgres:latest
     container_name: postgres

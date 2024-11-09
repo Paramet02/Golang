@@ -22,6 +22,7 @@ func main() {
 	productService := service.NewcatalogRedis(productRepo , redis)
 	prodductHandler := handler.NewcatalogHandler(productService)
 
+	
 	app := fiber.New()
 
 	app.Get("/GetProduct" , prodductHandler.GetProduct)
@@ -29,8 +30,8 @@ func main() {
 	app.Listen(":8000")
 }
 
-func initDatabase() *gorm.DB {
-	dial := mysql.Open("root:Newadmin@tcp(localhost:3306)/infinitas")
+func initDatabase() *gorm.DB { 
+	dial := mysql.Open("root:mypassword@tcp(localhost:3306)/mydatabase")
 	db, err := gorm.Open(dial, &gorm.Config{})
 	if err != nil {
 		panic(err)

@@ -16,7 +16,7 @@ services:
     image: loadimpact/k6
     container_name: k6
     environment:
-      - K6_OUT=influxdb=http://influxdb:8086/k6-paramet # ยิงไป loadtest ไปยัง influxdb
+      - K6_OUT=influxdb=http://influxdb:8086/k6 # ยิงไป loadtest ไปยัง influxdb
     volumes: 
       - ./scripts:/scripts # เอาไฟล์ scripts จาก folder scripts ไปยัง docker 
       
@@ -24,7 +24,7 @@ services:
     image: influxdb:1.8.10
     container_name: influxdb
     environment:
-      - INFLUXDB_DB=k6-paramet
+      - INFLUXDB_DB=k6
       - INFLUXDB_HTTP_MAX_BODY_SIZE=0
     volumes:
       - ./data/influxdb:/var/lib/influxdb 
