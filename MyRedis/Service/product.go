@@ -13,4 +13,4 @@ type ProductService interface{
 	UpdateProduct(product Product) error
 	GetProducts() ([]Product , error)
 	GetProduct(name string) ([]Product , error)
-} 
+} // c
